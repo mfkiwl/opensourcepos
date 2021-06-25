@@ -489,7 +489,9 @@ class Sales extends Secure_Controller
 		$item_location = $this->input->post('location');
 		$discounted_total = $this->input->post('discounted_total') != '' ? $this->input->post('discounted_total') : NULL;
 
-		if($this->form_validation->run() != FALSE)
+		$data['warning'] = $this->sale_lib->out_of_stock($this->sale_lib->get_item_id($item_id), $item_location);
+
+		if($this->form_validation->run() != FALSE && $data['warning'] == '')
 		{
 			$this->sale_lib->edit_item($item_id, $description, $serialnumber, $quantity, $discount, $discount_type, $price, $discounted_total);
 			
@@ -499,8 +501,6 @@ class Sales extends Secure_Controller
 		{
 			$data['error'] = $this->lang->line('sales_error_editing_item');
 		}
-
-		$data['warning'] = $this->sale_lib->out_of_stock($this->sale_lib->get_item_id($item_id), $item_location);
 
 		$this->_reload($data);
 	}
